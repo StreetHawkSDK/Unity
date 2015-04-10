@@ -25,6 +25,14 @@
   
     <activity android:name="com.unity3d.player.UnityPlayerNativeActivity" android:label="@string/app_name" android:configChanges="orientation"
                android:screenOrientation="sensorLandscape">
+			    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+        <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+      </intent-filter>
+      <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
+      <meta-data android:name="unityplayer.ForwardNativeEventsToDalvik" android:value="false" />
+	  
 	  <!--  Deep Linking -->
 	  <!-- Accepts URIs that begin with "http://www.sudoku.com/” -->
 	  <!-- Accept chrome links -->
@@ -56,13 +64,7 @@
               android:host="game" />
     </intent-filter>
 	  <!--  Deep Linking -->
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-        <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-      </intent-filter>
-      <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
-      <meta-data android:name="unityplayer.ForwardNativeEventsToDalvik" android:value="false" />
+     
     </activity>
 
 	 <!-- Start copying from below -->
