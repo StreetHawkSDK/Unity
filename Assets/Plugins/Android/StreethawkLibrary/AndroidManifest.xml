@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.streethawk.library"
+    android:versionCode="1"
+    android:versionName="1/1.5.3" >
+
+    <!-- Must have permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" />
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
+
+    <application android:allowBackup="true" >
+        <service android:name=".GCMIntentService" />
+        <service android:name=".StreethawkLocationService" />
+        <service android:name=".StreethawkBeaconService" />
+        <receiver android:name=".StreethawkBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
+                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="com.streethawk.intent.action.gcm.STREETHAWK_APP_STATUS_CHK" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".SHFeedbackActivity"
+            android:label="SHFeedbackActivity"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name=".SelftestActivity"
+            android:exported="true"
+            android:label="SelftestActivity"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+
+        <receiver
+            android:name=".PushNotificationBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.streethawk.intent.action.pushnotification" />
+                <action android:name="com.streethawk.intent.action.gcm.STREETHAWK_DECLINED" />
+                <action android:name="com.streethawk.intent.action.gcm.STREETHAWK_POSTPONED" />
+                <action android:name="com.streethawk.intent.action.gcm.STREETHAWK_ACCEPTED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>
