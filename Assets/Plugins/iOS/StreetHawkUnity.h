@@ -26,10 +26,7 @@ extern "C" {
     bool _isPushNotificationEnabled();
     
     
-    bool _locationServiceEnabledForApp(bool allowNotDetermined);
-    bool _enterBeacon(const char * UUID,double majorNumber,double minorNumber,const char * identifier);
-    void _exitBeacon(const char * UUID,double majorNumber,double minorNumber,const char * identifier);
-	void _shSetManualLocationAtLatitude(double latitude,double longitude);
+    bool _locationServiceEnabledForApp(bool allowNotDetermined);    
     int _getAlertSettingMinutes();
 	char* _getSHLibraryVersion();
 	void _shNotifyPageEnter(const char * name);

@@ -63,19 +63,16 @@ public class StreetHawk
 	private static extern bool _isPushNotificationEnabled ();
 	
 	[DllImport ("__Internal")]
-	private static extern bool _enterBeacon (string UUID, double majorNumber, double minorNumber, string identifier);
+	private static extern bool _enterBeacon (string UUID, double majorNumber, double minorNumber);
 	
 	[DllImport ("__Internal")]
-	private static extern void _exitBeacon (string UUID, double majorNumber, double minorNumber, string identifier);
+	private static extern void _exitBeacon (string UUID, double majorNumber, double minorNumber);
 
 	[DllImport ("__Internal")]
 	private static extern string _getSHLibraryVersion ();
 
 	[DllImport ("__Internal")]
 	private static extern void _shNotifyPageEnter (string name);
-
-	[DllImport ("__Internal")]
-	private static extern void _shSetManualLocationAtLatitude (double latitude, double longitude);
 
 	[DllImport ("__Internal")]
 	private static extern string _shGetViewName ();
@@ -460,14 +457,13 @@ public class StreetHawk
 	* @param int major - major number of beacon detected
 	* @param int minor - minor number of beacon detected
 	* @param double distance - for android, distance of beacon from device
-	* @param string identifier - for ios, identifier of beacon
 	*	 
 	* @returns int - true for successful reporting, false for error, Check log messages for details
 	*/
-	public static bool EnterBeacon (string UUID, int major, int minor, double distance, string identifier)
+	public static bool EnterBeacon (string UUID, int major, int minor, double distance)
 	{
 		#if UNITY_IPHONE || UNITY_IOS
-		return _enterBeacon (UUID, major, minor, identifier);
+		return true;
 		#elif UNITY_ANDROID
 		return INSTANCE.Call <int> ("shEnterBeacon", CurrentActivity, UUID, major, minor, distance) == 0 ? true : false;
 		#elif UNITY_EDITOR
@@ -484,14 +480,12 @@ public class StreetHawk
 	* @param string UUID - UUID of the beacon detected
 	* @param int major - major number of beacon detected
 	* @param int minor - minor number of beacon detected
-	* @param string identifier - for ios, identifier of beacon
 	*	 
 	* @returns bool - true for successful reporting, false for error, Check log messages for details
 	*/
-	public static bool ExitBeacon (string UUID, int major, int minor, string identifier)
+	public static bool ExitBeacon (string UUID, int major, int minor)
 	{
 		#if UNITY_IPHONE || UNITY_IOS
-		_exitBeacon (UUID, major, minor, identifier);
 		return true;
 		#elif UNITY_ANDROID
 		return INSTANCE.Call <int> ("shExitBeacon", CurrentActivity, UUID, major, minor) == 0 ? true : false;
@@ -565,23 +559,6 @@ public class StreetHawk
 				
 	}
 	
-
-	/**
-	 * Call this API to set the Location manually.
-	 * 
-	 * @param double latitude
-	 * @param double longitude
-	 */
-	public static void SetManualLocation (double latitude, double longitude)
-	{
-		#if UNITY_IPHONE || UNITY_IOS
-		_shSetManualLocationAtLatitude (latitude, longitude);
-		#elif UNITY_ANDROID
-		INSTANCE.Call ("shSetManualLocation", latitude, longitude);
-		#endif
-				
-	}
-
 	/**
 	 * Use this API to notify streethawk when user enters a new page.
 	 * App developer is expected to call this API for all the pages whose analytics is of interest to him.

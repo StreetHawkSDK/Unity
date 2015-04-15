@@ -4,9 +4,9 @@
 
 extern "C"{
     
-    void _registerInstallForApp(const char* appKey,bool isDebugMode, const char * iTunesId)
+    void _registerInstallForApp(const char * appKey,bool isDebugMode, const char * iTunesId)
     {
-        [StreetHawk registerInstallForApp:CreateNSString(appKey) withDebugMode: isDebugMode?YES:NO withiTunesId:CreateNSString(iTunesId)];
+        [StreetHawk registerInstallForApp:CreateNSString(appKey) withDebugMode:isDebugMode?YES:NO withiTunesId:CreateNSString(iTunesId)];
     }
     void _tagNumeric(double value,const char * key)
     {
@@ -18,11 +18,7 @@ extern "C"{
     }
     void _tagDateTime(const char * date,const char * key)
     {
-        NSString *dateString = CreateNSString(date);
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-        NSDate *dateFromString = [[NSDate alloc] init];
-        dateFromString = [dateFormatter dateFromString:dateString];
+        NSDate *dateFromString = parseDate(CreateNSString(date), 0);
         [StreetHawk tagDatetime:dateFromString forKey:CreateNSString(key)];
     }
     void _incrementTag(const char * keyToIncrement)
@@ -35,7 +31,7 @@ extern "C"{
     }
     void _streetHawkInit()
     {
-        [StreetHawk registerInstallForApp:StreetHawk.appKey withDebugMode: StreetHawk.isDebugMode withiTunesId:StreetHawk.itunesAppId];
+        [StreetHawk registerInstallForApp:StreetHawk.appKey withDebugMode:StreetHawk.isDebugMode withiTunesId:StreetHawk.itunesAppId];
     }
     void _setItunesId(const char * _itunesId)
     {
@@ -75,7 +71,7 @@ extern "C"{
     }
 	char* _getshGetViewName()
     {
-        return cStringCopy([StreetHawk shGetViewName]);
+        return cStringCopy([[StreetHawk shGetViewName] UTF8String]);
     }
     bool _isLogEnabled()
     {
@@ -89,21 +85,9 @@ extern "C"{
     {
         return StreetHawk.isNotificationEnabled;
     }
-    bool _enterBeacon(const char * UUID,double majorNumber,double minorNumber,const char * identifier)
-    {
-        NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:CreateNSString(UUID)];
-        CLBeaconRegion *beaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:uuid major:majorNumber minor:minorNumber identifier:CreateNSString(identifier)];
-        return [StreetHawk.locationManager startRangeiBeaconRegion:beaconRegion]?true:false;
-    }
-    void _exitBeacon(const char * UUID,double majorNumber,double minorNumber,const char * identifier)
-    {
-        NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:CreateNSString(UUID)];
-        CLBeaconRegion *beaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:uuid major:majorNumber minor:minorNumber identifier:CreateNSString(identifier)];
-        [StreetHawk.locationManager stopRangeiBeaconRegion:beaconRegion];
-    }
     bool _locationServiceEnabledForApp(bool allowNotDetermined)
     {
-        return [StreetHawk.locationManager locationServiceEnabledForApp:allowNotDetermined?YES:NO]?true:false;
+        return [SHLocationManager locationServiceEnabledForApp:allowNotDetermined?YES:NO]?true:false;
     }
     void _setAlertSetting(int minutes)
     {
@@ -112,25 +96,19 @@ extern "C"{
     int _getAlertSettingMinutes()
     {
         return (int)[StreetHawk getAlertSettingMinutes];
-    }
-	void _shSetManualLocationAtLatitude(double latitude,double longitude)
-	{
-	 [StreetHawk shSetManualLocationAtLatitude:latitude atLongitude:longitude];
-	}
+    }	
 	void _shNotifyPageEnter(const char * name)
 	{
-	 [StreetHawk shNotifyPageEnter:CreateNSString(name)];
+        [StreetHawk shNotifyPageEnter:CreateNSString(name)];
 	}
     void _shNotifyPageExit(const char * name)
 	{
-	[StreetHawk shNotifyPageExit:CreateNSString(name)];
+        [StreetHawk shNotifyPageExit:CreateNSString(name)];
 	}
 	void _sendSimpleFedback(const char * title,const char * message)
 	{
-	[StreetHawk shFeedback:nil needInputDialog:NO needConfirmDialog:YES withTitle:CreateNSString(title) withMessage:CreateNSString(message)  withPushMsgid:0 withPushData:nil];
+        [StreetHawk shFeedback:nil needInputDialog:NO needConfirmDialog:YES withTitle:CreateNSString(title) withMessage:CreateNSString(message)  withPushMsgid:0 withPushData:nil];
 	}
-
-    
 }
 
 
