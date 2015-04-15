@@ -29,10 +29,6 @@ extern "C"{
     {
         [StreetHawk removeTag:CreateNSString(keyToRemove)];
     }
-    void _streetHawkInit()
-    {
-        [StreetHawk registerInstallForApp:StreetHawk.appKey withDebugMode:StreetHawk.isDebugMode withiTunesId:StreetHawk.itunesAppId];
-    }
     void _setItunesId(const char * _itunesId)
     {
         StreetHawk.itunesAppId = CreateNSString(_itunesId);

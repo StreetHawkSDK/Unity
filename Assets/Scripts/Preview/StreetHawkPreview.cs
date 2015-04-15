@@ -20,11 +20,11 @@ public class StreetHawkPreview : StreetHawkPreviewGUIBASE
 		StartX += XButtonStep;
 
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SetPushNotifSupport True")) {
-			StreetHawk.SetPushNotificationSupport (true);
+			StreetHawk._setIsPushNotificationEnabled (true);
 		}
 		StartX += XButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SetPushNotifSupport False")) {
-			StreetHawk.SetPushNotificationSupport (false);
+			StreetHawk._setIsPushNotificationEnabled (false);
 		}
 		StartY += YButtonStep;
 		StartX += XButtonStep;
@@ -105,12 +105,12 @@ public class StreetHawkPreview : StreetHawkPreviewGUIBASE
 		StartX = XStartPos;
 		StartY += YButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "Enter Beacon")) {
-			Debug.Log (StreetHawk.EnterBeacon ("fb0b57a2-8228-44 cd-913a-94a122b", 2, 1, 500, "identifier"));
+			Debug.Log (StreetHawk.EnterBeacon ("fb0b57a2-8228-44 cd-913a-94a122b", 2, 1, 500));
 		}
 
 		StartX += XButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "Exit Beacon")) {
-			Debug.Log (StreetHawk.ExitBeacon ("fb0b57a2-8228-44 cd-913a-94a122b", 2, 1, "identifier"));
+			Debug.Log (StreetHawk.ExitBeacon ("fb0b57a2-8228-44 cd-913a-94a122b", 2, 1));
 		}
 
 
@@ -135,12 +135,7 @@ public class StreetHawkPreview : StreetHawkPreviewGUIBASE
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "isUseLocation?")) {
 			Debug.Log (StreetHawk.isUseLocation ());
 		}
-		StartY += YButtonStep;
-		StartX += XButtonStep;
-		StartX = XStartPos;
-		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SetManualLocation")) {
-			StreetHawk.SetManualLocation (25.6, 45.36);
-		}
+
 			
 				
 		StartX = XStartPos;
@@ -175,7 +170,7 @@ public class StreetHawkPreview : StreetHawkPreviewGUIBASE
 		
 		StartX += XButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "NotifyPageEntered")) {
-			StreetHawk.NotifyPageEntered ("HomePage");
+			StreetHawk.NotifyPageEnter ("HomePage");
 		}
 
 	}

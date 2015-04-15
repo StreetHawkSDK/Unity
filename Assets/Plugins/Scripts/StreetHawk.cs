@@ -35,9 +35,6 @@ public class StreetHawk
 	private static extern void _setPushNotificationEnabled (bool isEnable);
 	
 	[DllImport ("__Internal")]
-	private static extern void _setDefaultPushNotificationEnabled (bool isEnable);
-	
-	[DllImport ("__Internal")]
 	private static extern void _setIsDefaultLocationServiceEnabled (bool isEnable);
 	
 	[DllImport ("__Internal")]
@@ -61,18 +58,15 @@ public class StreetHawk
 	
 	[DllImport ("__Internal")]
 	private static extern bool _isPushNotificationEnabled ();
-	
-	[DllImport ("__Internal")]
-	private static extern bool _enterBeacon (string UUID, double majorNumber, double minorNumber);
-	
-	[DllImport ("__Internal")]
-	private static extern void _exitBeacon (string UUID, double majorNumber, double minorNumber);
 
 	[DllImport ("__Internal")]
 	private static extern string _getSHLibraryVersion ();
 
 	[DllImport ("__Internal")]
 	private static extern void _shNotifyPageEnter (string name);
+
+	[DllImport ("__Internal")]
+	private static extern void _shNotifyPageExit (string name);
 
 	[DllImport ("__Internal")]
 	private static extern string _shGetViewName ();
@@ -201,7 +195,7 @@ public class StreetHawk
 	public static bool isUseBeacons ()
 	{
 		#if UNITY_IPHONE || UNITY_IOS
-		return false;
+		return true;
 		#elif UNITY_ANDROID
 		return INSTANCE.Call<bool> ("isUseBeacons");
 		#elif UNITY_EDITOR
@@ -304,7 +298,7 @@ public class StreetHawk
 	 * 
 	 * @param bool enable
 	 */
-	public static void SetPushNotificationSupport (bool enable)
+	public static void _setIsPushNotificationEnabled (bool enable)
 	{
 		#if UNITY_IPHONE || UNITY_IOS
 		_setPushNotificationEnabled (enable);
@@ -456,7 +450,7 @@ public class StreetHawk
 	* @param string UUID - UUID of the beacon detected
 	* @param int major - major number of beacon detected
 	* @param int minor - minor number of beacon detected
-	* @param double distance - for android, distance of beacon from device
+	* @param double distance - distance of beacon from device
 	*	 
 	* @returns int - true for successful reporting, false for error, Check log messages for details
 	*/
@@ -558,14 +552,14 @@ public class StreetHawk
 		#endif
 				
 	}
-	
+
 	/**
 	 * Use this API to notify streethawk when user enters a new page.
 	 * App developer is expected to call this API for all the pages whose analytics is of interest to him.
 	 * 
 	 * @param string page_name
 	 */
-	public static void NotifyPageEntered (string page_name)
+	public static void NotifyPageEnter (string page_name)
 	{
 		#if UNITY_IPHONE || UNITY_IOS
 		_shNotifyPageEnter (page_name);
@@ -574,6 +568,23 @@ public class StreetHawk
 		#endif
 				
 	}
+
+	/**
+	 * Use this API to notify streethawk when user exits a page.
+	 * App developer is expected to call this API for all the pages whose analytics is of interest to him.
+	 * 
+	 * @param string page_name
+	 */
+	public static void NotifyPageExit (string page_name)
+	{
+		#if UNITY_IPHONE || UNITY_IOS
+		_shNotifyPageEnter (page_name);
+		#elif UNITY_ANDROID
+		Debug.Log("Not Supported");
+		#endif
+		
+	}
+
 
 	/**
 	 * This API returns name of the page, if any requested by streethawk server, when app is in BG.
