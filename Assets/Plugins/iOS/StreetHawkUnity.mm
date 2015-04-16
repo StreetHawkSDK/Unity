@@ -18,8 +18,13 @@ extern "C"{
     }
     void _tagDateTime(const char * date,const char * key)
     {
-        NSDate *dateFromString = parseDate(CreateNSString(date), 0);
+        NSString *dateString = CreateNSString(date);
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        NSDate *dateFromString = [[NSDate alloc] init];
+        dateFromString = [dateFormatter dateFromString:dateString];
         [StreetHawk tagDatetime:dateFromString forKey:CreateNSString(key)];
+        
     }
     void _incrementTag(const char * keyToIncrement)
     {
@@ -65,7 +70,7 @@ extern "C"{
     {
         return cStringCopy([StreetHawk.version UTF8String]);
     }
-	char* _getshGetViewName()
+	char* _shGetViewName()
     {
         return cStringCopy([[StreetHawk shGetViewName] UTF8String]);
     }
