@@ -1,12 +1,33 @@
 #import "StreetHawkUnity.h"
-#import <Foundation/Foundation.h>
-#import <StreetHawkCore/StreetHawkCore.h>// your actual iOS library header
+
+@implementation JSONHandler
+
+- (void)shRawJsonCallbackWithTitle:(NSString *)title withMessage:(NSString *)message withJson:(NSString *)json {
+    UnitySendMessage("StreetHawk", "shRawJsonCallbackEvent", cStringCopy([json UTF8String]));
+}
+
+@end
+
+@implementation ActivityCallBack
+
+- (void)shPGDisplayHtmlFileName:(NSString *)html_fileName{
+    UnitySendMessage("StreetHawk", "shNotifyAppPageEvent", cStringCopy([html_fileName UTF8String]));
+}
+
+@end
+
 
 extern "C"{
     
     void _registerInstallForApp(const char * appKey,bool isDebugMode, const char * iTunesId)
     {
         [StreetHawk registerInstallForApp:CreateNSString(appKey) withDebugMode:isDebugMode?YES:NO withiTunesId:CreateNSString(iTunesId)];
+        
+        JSONHandler *handler = [[JSONHandler alloc] init];
+        [StreetHawk shSetCustomiseHandler:handler];
+        
+        ActivityCallBack *callBack = [[ActivityCallBack alloc] init];
+        [StreetHawk shPGHtmlReceiver:callBack];
     }
     void _tagNumeric(double value,const char * key)
     {
@@ -34,82 +55,95 @@ extern "C"{
     {
         [StreetHawk removeTag:CreateNSString(keyToRemove)];
     }
-    void _setItunesId(const char * _itunesId)
+    void _shSetiTunesId(const char * _itunesId)
     {
         StreetHawk.itunesAppId = CreateNSString(_itunesId);
     }
-    void _setPushNotificationSenderId(const char * senderId_OR_appKey)
-    {
-        //StreetHawk.appKey = CreateNSString(senderId_OR_appKey);
-    }
-    void _setEnableLogs(bool debugMode)
+    void _shSetEnableLogs(bool debugMode)
     {
         StreetHawk.isDebugMode = debugMode?YES:NO;
     }
-    void _setPushNotificationEnabled(bool isEnable)
+    void _shSetIsPushNotificationEnabled(bool isEnable)
     {
         StreetHawk.isNotificationEnabled = isEnable?YES:NO;
     }
-    void _setDefaultPushNotificationEnabled(bool isEnable)
+    void _shSetDefaultPushNotificationSupport(bool isEnable)
     {
         StreetHawk.isDefaultNotificationEnabled = isEnable?YES:NO;
     }
-    void _setIsDefaultLocationServiceEnabled(bool isEnable)
+    void _shSetDefaultLocationSupport(bool isEnable)
     {
         StreetHawk.isDefaultLocationServiceEnabled = isEnable?YES:NO;
     }
-    void _setIsLocationServiceEnabled(bool isEnable)
+    void _shSetIsUseLocation(bool isEnable)
     {
         StreetHawk.isLocationServiceEnabled = isEnable?YES:NO;
     }
-    char* _getItunesId()
+    char* _shiTunesId()
     {
         return cStringCopy([StreetHawk.itunesAppId UTF8String]);
     }
-	char* _getSHLibraryVersion()
+    char* _getSHLibraryVersion()
     {
         return cStringCopy([StreetHawk.version UTF8String]);
     }
-	char* _shGetViewName()
+    char* _shGetViewName()
     {
         return cStringCopy([[StreetHawk shGetViewName] UTF8String]);
     }
-    bool _isLogEnabled()
+    bool _shEnableLogs()
     {
         return StreetHawk.isDebugMode?true:false;
     }
-    bool _isLocationSupportEnabled()
+    bool _shIsUseLocation()
     {
         return StreetHawk.isLocationServiceEnabled;
     }
-    bool _isPushNotificationEnabled()
+    bool _shIsPushNotificationEnabled()
     {
         return StreetHawk.isNotificationEnabled;
     }
-    bool _locationServiceEnabledForApp(bool allowNotDetermined)
-    {
-        return [SHLocationManager locationServiceEnabledForApp:allowNotDetermined?YES:NO]?true:false;
-    }
-    void _setAlertSetting(int minutes)
+    void _shSetAlertSetting(int minutes)
     {
         [StreetHawk shSetAlertSetting:(NSInteger)minutes finish:nil];
     }
-    int _getAlertSettingMinutes()
+    int _shAlertSettings()
     {
         return (int)[StreetHawk getAlertSettingMinutes];
-    }	
-	void _shNotifyPageEnter(const char * name)
-	{
-        [StreetHawk shNotifyPageEnter:CreateNSString(name)];
-	}
-    void _shNotifyPageExit(const char * name)
-	{
-        [StreetHawk shNotifyPageExit:CreateNSString(name)];
-	}
-	void _sendSimpleFedback(const char * title,const char * message)
-	{
+    }
+    void _shSendSimpleFeedback(const char * title,const char * message)
+    {
         [StreetHawk shFeedback:nil needInputDialog:NO needConfirmDialog:YES withTitle:CreateNSString(title) withMessage:CreateNSString(message)  withPushMsgid:0 withPushData:nil];
-	}
+    }
+    void _shNotifyPageEnter(const char * name)
+    {
+        [StreetHawk shNotifyPageEnter:CreateNSString(name)];
+    }
+    void _shCustomActivityList (const char * friendlyName[],const char * vc[],const char * xib_iphone[],const char * xib_ipad[], int count)
+    {
+        NSMutableArray* activitList = [[NSMutableArray alloc] init];
+        for (int i =0; i<count; i++) {
+            SHFriendlyNameObject *name = [[SHFriendlyNameObject alloc] init];
+            NSString *_friendlyName = CreateNSString(friendlyName[i]);
+            NSString *_vc = CreateNSString(vc[i]);
+            NSString *_xib_iphone = CreateNSString(xib_iphone[i]);
+            NSString *_xib_ipad = CreateNSString(xib_ipad[i]);
+            if([_friendlyName length]>0)
+                name.friendlyName = _friendlyName;
+            if([_vc length]>0)
+                name.vc = _vc;
+            if([_xib_iphone length]>0)
+                name.xib_iphone = _xib_iphone;
+            if([_xib_ipad length]>0)
+                name.xib_ipad = _xib_ipad;
+            
+            [activitList addObject:name];
+            
+        }
+        NSArray *array = [activitList copy];
+        
+        [StreetHawk shCustomActivityList: array];
+    }
 }
 
 

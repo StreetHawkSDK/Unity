@@ -1,37 +1,49 @@
+#import <StreetHawkCore/ISHCustomiseHandler.h>
+#import <StreetHawkCore/ISHPhonegapObserver.h>
+#import <Foundation/Foundation.h>
+#import <StreetHawkCore/StreetHawkCore.h>
+#import "UnityAppController.h"
 
+@interface JSONHandler : NSObject <ISHCustomiseHandler>
+
+- (void)shRawJsonCallbackWithTitle:(NSString *)title withMessage:(NSString *)message withJson:(NSString *)json;
+
+@end
+@interface ActivityCallBack : NSObject <ISHPhonegapObserver>
+
+- (void)shPGDisplayHtmlFileName:(NSString *)html_fileName;
+
+@end
 
 extern "C" {
     void _registerInstallForApp(const char * filename,bool isDebugMode, const char * iTunesId);
-    
     void _tagNumeric(double value,const char * key);
     void _tagString(const char * value,const char * key);
     void _tagDateTime(const char * date,const char * key);
     void _incrementTag(const char * keyToIncrement);
     void _removeTag(const char * keyToRemove);
+    void _shSetiTunesId(const char * itunesId);
+    void _shSetEnableLogs(bool debugMode);
+    void _shSetIsPushNotificationEnabled(bool isEnable);
+    void _shSetDefaultPushNotificationSupport(bool isEnable);
+    void _shSetDefaultLocationSupport(bool isEnable);
+    void _shSetIsUseLocation(bool isEnable);
+    void _shSetAlertSetting(int minutes);
+    void _shSendSimpleFeedback(const char * title,const char * message);
+    void _shCustomActivityList (const char * friendlyName[],const char * vc[],const char * xib_iphone[],const char * xib_ipad[], int count);
+    void _shNotifyPageEnter(const char * name);
+   
+    bool _shEnableLogs();
+    bool _shIsUseLocation();
+    bool _shIsPushNotificationEnabled();
     
-    void _streetHawkInit();
+    int  _shAlertSettings();
     
-    void _setItunesId(const char * itunesId);
-    void _setPushNotificationSenderId(const char * senderId_OR_appKey);
-    void _setEnableLogs(bool debugMode);
-    void _setPushNotificationEnabled(bool isEnable);
-    void _setDefaultPushNotificationEnabled(bool isEnable);
-    void _setIsDefaultLocationServiceEnabled(bool isEnable);
-    void _setIsLocationServiceEnabled(bool isEnable);
-    void _setAlertSetting(int minutes);
-    
-    char* _getItunesId();
-    bool _isLogEnabled();
-    bool _isLocationSupportEnabled();
-    bool _isPushNotificationEnabled();
+    char* _getSHLibraryVersion();
+    char* _shGetViewName();
+    char* _shiTunesId();
     
     
-    bool _locationServiceEnabledForApp(bool allowNotDetermined);    
-    int _getAlertSettingMinutes();
-	char* _getSHLibraryVersion();
-	void _shNotifyPageEnter(const char * name);
-    void _shNotifyPageExit(const char * name); 
-    void _sendSimpleFedback(const char * title,const char * message);	
     
     
 }

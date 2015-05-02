@@ -14,37 +14,48 @@ public class StreetHawkPreview : StreetHawkPreviewGUIBASE
 		
 		StartY += YLableStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "Init")) {
-			StreetHawk.Init ("Sudoku_Unlimited", "355613836466", "948704288");
+		
+			StreetHawk.Instance.streethawkinit ("Sudoku_Unlimited", "355613836466", "948704288");
+		}
+
+		StartX += XButtonStep;
+		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "RegisterObserver")) {
+			
+			StreetHawk.Instance.registerObserver ();
 		}
 		
-		StartX += XButtonStep;
-
-		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SetPushNotifSupport True")) {
-			StreetHawk._setIsPushNotificationEnabled (true);
-		}
-		StartX += XButtonStep;
-		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SetPushNotifSupport False")) {
-			StreetHawk._setIsPushNotificationEnabled (false);
-		}
 		StartY += YButtonStep;
 		StartX += XButtonStep;
 		StartX = XStartPos;
-		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "IsPushNotifEnabled?")) {
-			Debug.Log (StreetHawk.isPushNotificationsEnabled ());
+
+		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SetPushNotifSupport True")) {
+			StreetHawk.Instance.shSetIsPushNotificationEnabled (true);
 		}
-//				StartX += XButtonStep;
-//				if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "EnableLogs_True")) {
-//						//StreetHawk.SetEnableLogs (true);
-//				}
-//				StartX += XButtonStep;
-//				if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "EnableLogs_False")) {
-//						//StreetHawk.SetEnableLogs (false);
-//				}
-//
-//				StartX += XButtonStep;
-//				if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "isLogEnabled?")) {
-//						//Debug.Log (StreetHawk.IsLogEnabled ());
-//				}
+		StartX += XButtonStep;
+		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SetPushNotifSupport False")) {
+			StreetHawk.Instance.shSetIsPushNotificationEnabled (false);
+		}
+		StartX += XButtonStep;
+		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "IsPushNotifEnabled?")) {
+			Debug.Log (StreetHawk.Instance.shIsPushNotificationEnabled ());
+		}
+
+		StartY += YButtonStep;
+		StartX += XButtonStep;
+		StartX = XStartPos;
+
+		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "EnableLogs_True")) {
+			StreetHawk.Instance.shSetEnableLogs (true);
+		}
+		StartX += XButtonStep;
+		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "EnableLogs_False")) {
+			StreetHawk.Instance.shSetEnableLogs (false);
+		}
+
+		StartX += XButtonStep;
+		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "isLogEnabled?")) {
+			Debug.Log (StreetHawk.Instance.shEnableLogs ());
+		}
 
 		StartX = XStartPos;
 		StartY += YLableStep;
@@ -55,28 +66,28 @@ public class StreetHawkPreview : StreetHawkPreviewGUIBASE
 		StartX = XStartPos;
 		StartY += YLableStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "Tag Numeric")) {
-			StreetHawk.tagNumeric ("TagNumericTest", 99.99);
+			StreetHawk.Instance.tagNumeric ("TagNumericTest", 99.99);
 		}
 
 		StartX += XButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "Tag String")) {
-			StreetHawk.tagString ("TagStringTest", "Test Value");
+			StreetHawk.Instance.tagString ("TagStringTest", "Test Value");
 		}
 
 		StartX += XButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "Tag DateTime")) {
-			StreetHawk.tagDateTime ("TagDateTimeTest", StreetHawk.getCurrentFormattedDateTime ());
+			StreetHawk.Instance.tagDateTime ("TagDateTimeTest", StreetHawk.Instance.getCurrentFormattedDateTime ());
 		}
 
 		StartX = XStartPos;
 		StartY += YButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "Increment Tag")) {
-			StreetHawk.incrementTag ("IncrementTagTest");
+			StreetHawk.Instance.incrementTag ("IncrementTagTest");
 		}
 
 		StartX += XButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "Remove Tag")) {
-			StreetHawk.removeTag ("IncrementTagTest");//Remove An Existing Tag
+			StreetHawk.Instance.removeTag ("IncrementTagTest");//Remove An Existing Tag
 		}
 			
 
@@ -89,28 +100,23 @@ public class StreetHawkPreview : StreetHawkPreviewGUIBASE
 		StartX = XStartPos;
 		StartY += YLableStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SetBeaconSupport True")) {
-			StreetHawk.SetBeaconSupport (true);
+			StreetHawk.Instance.shSetBeaconSupport (true);
 		}
 		
 		StartX += XButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SetBeaconSupport False")) {
-			StreetHawk.SetBeaconSupport (false);
-		}
-		
-		StartX += XButtonStep;
-		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "isUseBeacon?")) {
-			Debug.Log (StreetHawk.isUseBeacons ());
+			StreetHawk.Instance.shSetBeaconSupport (false);
 		}
 
 		StartX = XStartPos;
 		StartY += YButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "Enter Beacon")) {
-			Debug.Log (StreetHawk.EnterBeacon ("fb0b57a2-8228-44 cd-913a-94a122b", 2, 1, 500));
+			Debug.Log (StreetHawk.Instance.shEnterBeacon ("fb0b57a2-8228-44 cd-913a-94a122b", 2, 1, 500));
 		}
 
 		StartX += XButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "Exit Beacon")) {
-			Debug.Log (StreetHawk.ExitBeacon ("fb0b57a2-8228-44 cd-913a-94a122b", 2, 1));
+			Debug.Log (StreetHawk.Instance.shExitBeacon ("fb0b57a2-8228-44 cd-913a-94a122b", 2, 1));
 		}
 
 
@@ -123,17 +129,17 @@ public class StreetHawkPreview : StreetHawkPreviewGUIBASE
 		StartX = XStartPos;
 		StartY += YLableStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SetLocationSupport_True")) {
-			StreetHawk.SetLocationSupport (true);
+			StreetHawk.Instance.shSetIsUseLocation (true);
 		}
 		
 		StartX += XButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SetLocationSupport_False")) {
-			StreetHawk.SetLocationSupport (false);
+			StreetHawk.Instance.shSetIsUseLocation (false);
 		}
 
 		StartX += XButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "isUseLocation?")) {
-			Debug.Log (StreetHawk.isUseLocation ());
+			Debug.Log (StreetHawk.Instance.shIsUseLocation ());
 		}
 
 			
@@ -147,12 +153,12 @@ public class StreetHawkPreview : StreetHawkPreviewGUIBASE
 		StartX = XStartPos;
 		StartY += YLableStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SetAlertSettings")) {
-			StreetHawk.SetAlertSettings (5);
+			StreetHawk.Instance.shSetAlertSetting (5);
 		}
 		
 		StartX += XButtonStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "GetAlertSettings")) {
-			Debug.Log (StreetHawk.GetAlertSettings ());
+			Debug.Log (StreetHawk.Instance.shAlertSettings ());
 		}
 
 
@@ -165,12 +171,17 @@ public class StreetHawkPreview : StreetHawkPreviewGUIBASE
 		StartX = XStartPos;
 		StartY += YLableStep;
 		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "SendSimpleFeedback")) {
-			StreetHawk.SendSimpleFeedback ("Feedback", "This is a feedback");
+			StreetHawk.Instance.shSendSimpleFeedback ("Feedback", "This is a feedback");
 		}
 		
 		StartX += XButtonStep;
-		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "NotifyPageEntered")) {
-			StreetHawk.NotifyPageEnter ("HomePage");
+		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "CurrentPage")) {
+			StreetHawk.Instance.currentPage ("HomePage");
+		}
+
+		StartX += XButtonStep;
+		if (GUI.Button (new Rect (StartX, StartY, buttonWidth, buttonHeight), "GetViewName")) {
+			Debug.Log (StreetHawk.Instance.shGetViewName ());
 		}
 
 	}

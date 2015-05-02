@@ -27,13 +27,13 @@
 - (void) openURLAfterDelay:(NSURL*) url
 {
     
-    UnitySendMessage("Deeplink", "URLHandler", [[url absoluteString] UTF8String]);
+    UnitySendMessage("StreetHawk", "URLHandler", [[url absoluteString] UTF8String]);
 }
 
 -(BOOL) application:(UIApplication *)application handleOpenURL:(NSURL *)url
 {
     
-    UnitySendMessage("Deeplink", "URLHandler", [[url absoluteString] UTF8String]);
+    UnitySendMessage("StreetHawk", "URLHandler", [[url absoluteString] UTF8String]);
     
     return YES;
     
@@ -42,7 +42,7 @@
  -(BOOL) application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
  
  {
-     UnitySendMessage("Deeplink", "URLHandler", [[url absoluteString] UTF8String]);
+     UnitySendMessage("StreetHawk", "URLHandler", [[url absoluteString] UTF8String]);
      return YES;
      
  }
