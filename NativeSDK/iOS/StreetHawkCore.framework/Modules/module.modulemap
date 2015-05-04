@@ -1,0 +1,6 @@
+framework module StreetHawkCore {
+  umbrella header "StreetHawkCore.h"
+
+  export *
+  module * { export * }
+}
