@@ -1,0 +1,166 @@
+Version Number   : 1/1.5.5
+Release Date     : 25-April-2015
+Notes:
+1. Add scroll label to display 8000 title and message. It will scroll on demand.
+2. Avoid send request in case StreetHawk is disabled. 
+3. Remove API of sending manual location.
+4. Customer category can have same identifier to override StreetHawk predefined category.
+5. Feedback with long option list can scroll.
+6. Fix location permission not promote in case user install and not launch for more than half an hour.
+7. Delay post application did finish launch notification for platforms get StreetHawk ready later.
+8. Hard code development platform in SDK.
+------------------------------------------------------------------------
+Version Number   : 1/1.5.4
+Release Date     : 23-March-2015
+Notes:
+1. Fix iBeacon not detetable bug due to identifier.
+2. Add flag to ignore second and later call to "registerInstallForApp".
+------------------------------------------------------------------------
+Version Number   : 1/1.5.3
+Release Date     : 13-February-2015
+Notes:
+1. Implement deeplinking.
+2. 8005 rate push notification remove "Dismiss" choice.
+3. 8011 feedback push notification show confirm dialog when App in foreground. 
+------------------------------------------------------------------------
+Version Number   : 1/1.5.2
+Release Date     : 23-January-2015
+Notes:
+1. Add API for customer to setup their own interactive notification categories.
+2. Register new install if client side switch Apns mode.
+3. Show toast message for feedback submit successfully.
+4. Add API "shRawJsonCallback" for handle 8049 customised remote notification.
+5. Try to send more location 19 regardless network status.
+6. Slide view show scrollable title and message for 8000.
+7. Simplify App FG BG loglines to be pair. 
+8. Implement Feed.
+9. Class method `[SHApp app]` is renamed as `[SHApp sharedInstance]` for Swift.
+10. Implement API for permission denied check and launch preference UI.
+11. Fix SQLite fail to setup SERIALIZED mode.
+12. Check embedded binary framework path inside built package for searching for resource bundle.
+------------------------------------------------------------------------
+Version Number   : 1/1.5.0
+Release Date     : 1-December-2014
+Notes:
+1. iOS 8 implemented interactive user notification.
+2. Fix rotation bug in iOS 8 due to coordinate change.
+3. Add "live" into install to indicate current App is on AppStore or Enterprise.
+4. Handle silent remote notification by implement new system callback.
+5. Get rid of ApnsMode_Dev/Prod by detecting provisioning profile type.
+6. Remove parameter `enableCrashReport:`, have it enabled always, same as Android.
+7. Re-register new install if logs.db not match.
+8. Add mutex for logs.db insert/update/delete, config SQLite SQLITE_CONFIG_SERIALIZED.
+9. If notification banner message longer than 2 lines, show dialog even App from BG. 
+10. 8049 not treat as known code.
+11. Tag key check and truncated to be no more than 30 characters. 
+12. 8010 simple push should display dialog when launch from notification.
+13. Add API `shSetManualLocationAtLatitude`.
+------------------------------------------------------------------------
+Version Number   : 1/1.4.3
+Release Date     : 8-November-2014
+Notes:
+1. Add preprocessor marco "SUPPORT_IBEACON" to avoid iBeacon functions in compile time.
+2. Implement auto-integrate AppDelegate functions. 
+3. Add lowercase "development_platform" in install/update and core/library query parameter. 
+4. Fix iOS 8 delay asking for location permission bug. 
+5. Fix StreetHawkCoreRes.bundle contains executable file and reject by Apple. 
+6. Not compress high resolution png files into tiff. 
+7. Fix iBeacon fetch bug if set default location disabled.
+8. Read APP_KEY from Info.plist.
+------------------------------------------------------------------------
+Version Number   : 1/1.4.2
+Release Date     : 16-October-2014
+Notes:
+1. Implement heartbeat log and more location log. 
+2. Fix Titanium module wake up by notification and check Application status. 
+3. Clear badge when App launch. 
+4. Notification payload replace t+m by alert+l+n. 
+5. Do not buffer logline with code 20 if device is not connected to internet connection.
+6. Session id increases for logs between FG and BG. 
+7. Reduce size of framework for phonegap by remove PLCrashReport and debug information. 
+8. Implement alert settings API. 
+9. Implement Smart Push, which uses local notification to simulate remote notification. 
+10. Compatible with Xcode 6 and iOS 8, all functions work same as before. 
+------------------------------------------------------------------------
+Version Number   : 1/1.4.1
+Release Date     : 12-September-2014
+Notes:
+1. Implement push result for remote notification to trace user action. 
+2. Not send loc_lat and loc_lng in logs if user disable location service.
+3. After disable location service, "Location service denied by user." log only sent once till next enable location service and disable again. 
+4. AppStore production version not check library version.
+5. Crash report add information about "development platform". 
+6. Clear badge when App launch.
+------------------------------------------------------------------------
+Version Number   : 1/1.4.0
+Release Date     : 25-JULY-2014
+Notes:
+1. Clean code and migrate to ARC, reduce library size. 
+2. Location Updates via Install Logs only. 
+3. Server is capable of controlling App by "app_status". 
+4. install.model get real device name. 
+5. Supporting iBeacons. 
+6. StreetHawkBase(Table)ViewController only do enter/exit logs. 
+------------------------------------------------------------------------
+Version Number   : 1/1.3.4
+Release Date     : 16-JUNE-2014
+Notes:
+1. App to BG background task should not be global to avoid disorder begin and end.
+2. Show information tip if new library is available. 
+3. Add StreetHawk supported code 8011 for feedback. 
+4. Fix push notification handling bugs. 
+5. Tag API changes, add one API [StreetHawk incrementTag:<number>], rename others: [StreetHawk tagNumber:<number>] to [StreetHawk tagNumeric:<number>],
+   [StreetHawk tagDate:<date>] to [StreetHawk tagDatetime:<date>].
+6. Crash report add information such as [AppStore/Other], [SDK Version, e.g. 1/1.3.2 (1)], [Install Id, e.g. ABDEF2CBF6CYX927]`.
+7. Remove last slash from query.
+8. Client version change to formatted as `CFBundleShortVersionString (CFBundleVersion)`.
+9. VC enter/exit use class name directly in comment, not use dictionary.
+10. Refine register install API to be more user friendly: 
+   [StreetHawk registerInstallForApp:<app id> withDefaultHostRootUrl:nil withApnsMode:<apns enum> withDebugMode:<YES/NO> enableCrashReport:<YES/NO> withiTunesId:<itunes app id>];
+11. Delaying asking for system permission using:
+   Push notification sample: StreetHawk.isDefaultPushNotificationEnabled = NO;
+   Location service sample: StreetHawk.isDefaultLocationServiceEnabled = NO;
+12. Fix crash report not submitted immediately after App launch bug. 
+13. Enhancement for Phonegap. 
+------------------------------------------------------------------------
+Version Number   : 1/1.3.3
+Release Date     : 29-APR-2014
+Notes:
+1. Fix crash in background task, execution must in another thread (using NSOperationQueue), cannot wait in main thread.
+2. Create new instance of NSDateFormatter to avoid multiple thread crash.
+------------------------------------------------------------------------
+Version Number   : 1/1.3.2
+Release Date     : 14-APR-2014
+Notes:
+1. Fix remote notification bug: library cannot handle empty d(data) for 8004.
+2. Update iOS's resource strings to be same as Android's.
+3. Fix bug of slide for web url should be able to handle address without http://.
+4. Fix crash when install/update and install/log happen at same time, release currentInstall by mistake.
+------------------------------------------------------------------------
+Version Number   : 1/1.3.1
+Release Date     : 10-APR-2014
+Notes:
+1. Check `identifierForVendor` not nil before use it in post parameters.
+2. Print waring if iTunesAppId is not setup.
+3. Move hard-coded strings to resource file so that customer can modify them.
+4. Deprecate login or register to StreetHawk server in client SDK API.
+5. Send install/log to server when iBeacon enter or exit region. 
+------------------------------------------------------------------------
+Version Number   : 1/1.3.0
+Release Date     : 29-MAR-2014
+Notes:
+1. Slide supports rotate, rotate capability depends on content VC. 
+2. Fix slide position bug in pre-iOS 7.
+3. Fix activity spinner position bug cause it show on top.
+4. Implement feedback in new design.
+5. Add app_key(sh_version) to User-Agent of StreetHawk request header.
+6. Fix date time random code bug caused by locale. 
+------------------------------------------------------------------------
+Version Number   : 1/1.2.6
+Release Date     : 17-MAR-2014
+Notes:
+1. Not encode install/log comment to string if it's a json dictionary.
+2. Support 8010 simple promote. 
+3. Add version attribute to StreetHawk library. 
+4. Add API `shCustomActivityList`, 8004, 8006 and 8007 supports friendly names.
+5. Fix multiple slides make the App crash, only show last slide if multiple slide happen.
