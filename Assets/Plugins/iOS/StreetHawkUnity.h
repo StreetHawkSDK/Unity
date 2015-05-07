@@ -9,16 +9,14 @@
 - (void)shRawJsonCallbackWithTitle:(NSString *)title withMessage:(NSString *)message withJson:(NSString *)json;
 
 @end
-
 @interface ActivityCallBack : NSObject <ISHPhonegapObserver>
 
 - (void)shPGDisplayHtmlFileName:(NSString *)html_fileName;
 
 @end
 
-extern "C"
-{
-    void _registerInstallForApp(const char * appKey,bool isDebugMode, const char * iTunesId);
+extern "C" {
+    void _registerInstallForApp(const char * filename,bool isDebugMode, const char * iTunesId);
     void _tagNumeric(double value,const char * key);
     void _tagString(const char * value,const char * key);
     void _tagDateTime(const char * date,const char * key);
@@ -44,6 +42,10 @@ extern "C"
     char* _getSHLibraryVersion();
     char* _shGetViewName();
     char* _shiTunesId();
+    
+    
+    
+    
 }
 
 NSString* CreateNSString(const char* string);

@@ -1,6 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2008
 
+Project("{273DF4E1-847B-913B-429C-97FD8B9A6745}") = "StreetHawk", "Assembly-CSharp-firstpass-vs.csproj", "{CA3619A9-8950-F9B7-AFE1-25419733D14B}"
+EndProject
 Project("{273DF4E1-847B-913B-429C-97FD8B9A6745}") = "StreetHawk", "Assembly-CSharp-vs.csproj", "{A5E8640A-AA25-90FB-5B14-1F482B872B9F}"
 EndProject
 Global
@@ -9,6 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA3619A9-8950-F9B7-AFE1-25419733D14B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA3619A9-8950-F9B7-AFE1-25419733D14B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA3619A9-8950-F9B7-AFE1-25419733D14B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA3619A9-8950-F9B7-AFE1-25419733D14B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A5E8640A-AA25-90FB-5B14-1F482B872B9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A5E8640A-AA25-90FB-5B14-1F482B872B9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5E8640A-AA25-90FB-5B14-1F482B872B9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -17,7 +23,7 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																																																									GlobalSection(MonoDevelopProperties) = preSolution
+																																																																		GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
