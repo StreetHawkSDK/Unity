@@ -12,15 +12,13 @@ public struct SHFriendlyNameObject
 	public string xib_iphone;
 	public string xib_ipad;
 	
-	public SHFriendlyNameObject (string _friendlyName, string _vc, string _xib_iphone = "", string _xib_ipad = "")
+	public SHFriendlyNameObject (string _friendlyName, string _vc, string _xib_iphone, string _xib_ipad)
 	{
 		this.friendlyName = _friendlyName;
 		this.vc = _vc;
 		this.xib_iphone = _xib_iphone;
 		this.xib_ipad = _xib_ipad;
 	}
-	
-	
 }
 
 public class StreetHawk : MonoBehaviour
@@ -40,7 +38,7 @@ public class StreetHawk : MonoBehaviour
 
 	#if UNITY_IPHONE || UNITY_IOS
 	[DllImport ("__Internal")]
-	private static extern void _registerInstallForApp (string appID, bool isDebugMode, string iTunesId);
+	private static extern void _registerInstallForApp (string appkey, bool isDebugMode, string iTunesId);
 	
 	[DllImport ("__Internal")]
 	private static extern void _tagNumeric (double value, string key);
@@ -108,7 +106,6 @@ public class StreetHawk : MonoBehaviour
 	[DllImport ("__Internal")]
 	private static extern string _shGetViewName ();
 	
-	
 	#endif
 
 	#if UNITY_ANDROID
@@ -125,8 +122,6 @@ public class StreetHawk : MonoBehaviour
 	//Instance of UnityWrapper Class
 	private AndroidJavaObject Callback; 
 	#endif
-
-
 
 	public string Scheme {
 		get {
@@ -151,7 +146,6 @@ public class StreetHawk : MonoBehaviour
 			return (URL != null) ? queries : new Dictionary<string,string> ();
 		}
 	}
-
 
 	void Awake ()
 	{
@@ -207,12 +201,9 @@ public class StreetHawk : MonoBehaviour
 					string key = Regex.Split (q [i], "=") [0];
 					string value = Regex.Split (q [i], "=") [1];
 					queries.Add (key, value);
-				}
-				
+				}				
 			}
-
 			success = true;
-
 		} catch {
 			Debug.Log ("Unknown URL Format");
 			Debug.Log ("Bad Format : " + URL);
@@ -256,7 +247,7 @@ public class StreetHawk : MonoBehaviour
 	public void streethawkinit (string appKey, string SenderID, string iTunesId)
 	{
 		#if UNITY_IPHONE || UNITY_IOS
-		_registerInstallForApp (appKey, true, iTunesId);
+		_registerInstallForApp (appKey, shEnableLogs(), iTunesId);
 		#elif UNITY_ANDROID
 		INSTANCE.Call ("setGcmSenderId", SenderID);
 		INSTANCE.Call ("init", CurrentApplication);

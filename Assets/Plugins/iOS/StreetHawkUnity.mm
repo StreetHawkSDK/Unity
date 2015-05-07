@@ -2,7 +2,8 @@
 
 @implementation JSONHandler
 
-- (void)shRawJsonCallbackWithTitle:(NSString *)title withMessage:(NSString *)message withJson:(NSString *)json {
+- (void)shRawJsonCallbackWithTitle:(NSString *)title withMessage:(NSString *)message withJson:(NSString *)json
+{
     UnitySendMessage("StreetHawk", "shRawJsonCallbackEvent", cStringCopy([json UTF8String]));
 }
 
@@ -10,14 +11,15 @@
 
 @implementation ActivityCallBack
 
-- (void)shPGDisplayHtmlFileName:(NSString *)html_fileName{
+- (void)shPGDisplayHtmlFileName:(NSString *)html_fileName
+{
     UnitySendMessage("StreetHawk", "shNotifyAppPageEvent", cStringCopy([html_fileName UTF8String]));
 }
 
 @end
 
-
-extern "C"{
+extern "C"
+{
     
     void _registerInstallForApp(const char * appKey,bool isDebugMode, const char * iTunesId)
     {
@@ -45,7 +47,6 @@ extern "C"{
         NSDate *dateFromString = [[NSDate alloc] init];
         dateFromString = [dateFormatter dateFromString:dateString];
         [StreetHawk tagDatetime:dateFromString forKey:CreateNSString(key)];
-        
     }
     void _incrementTag(const char * keyToIncrement)
     {
@@ -122,7 +123,8 @@ extern "C"{
     void _shCustomActivityList (const char * friendlyName[],const char * vc[],const char * xib_iphone[],const char * xib_ipad[], int count)
     {
         NSMutableArray* activitList = [[NSMutableArray alloc] init];
-        for (int i =0; i<count; i++) {
+        for (int i =0; i<count; i++)
+        {
             SHFriendlyNameObject *name = [[SHFriendlyNameObject alloc] init];
             NSString *_friendlyName = CreateNSString(friendlyName[i]);
             NSString *_vc = CreateNSString(vc[i]);
@@ -138,14 +140,10 @@ extern "C"{
                 name.xib_ipad = _xib_ipad;
             
             [activitList addObject:name];
-            
         }
-        NSArray *array = [activitList copy];
-        
-        [StreetHawk shCustomActivityList: array];
+        [StreetHawk shCustomActivityList:activitList];
     }
 }
-
 
 NSString* CreateNSString(const char* string)
 {
@@ -154,6 +152,7 @@ NSString* CreateNSString(const char* string)
     else
         return [NSString stringWithUTF8String:""];
 }
+
 char* cStringCopy(const char* string)
 {
     if (string == NULL)
