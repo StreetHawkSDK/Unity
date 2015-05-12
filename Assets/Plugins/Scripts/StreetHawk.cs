@@ -4,22 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-
-public struct SHFriendlyNameObject
-{
-	public string friendlyName;
-	public string vc;
-	public string xib_iphone;
-	public string xib_ipad;
-	
-	public SHFriendlyNameObject (string _friendlyName, string _vc, string _xib_iphone, string _xib_ipad)
-	{
-		this.friendlyName = _friendlyName;
-		this.vc = _vc;
-		this.xib_iphone = _xib_iphone;
-		this.xib_ipad = _xib_ipad;
-	}
-}
+using System.Linq;
 
 public class StreetHawk : MonoBehaviour
 {
@@ -255,7 +240,6 @@ public class StreetHawk : MonoBehaviour
 	}
 	
 /**
-	 * For Android
 	 * Call this API for submitting map of friendly names and fully qualified names to Streethawk library.
 	 * 
 	 * @param Dictionary<string, string> _ActivityList
@@ -285,30 +269,19 @@ public class StreetHawk : MonoBehaviour
 			}
 			INSTANCE.Call ("shCustomActivityList", obj_HashMap);
 		}
-		#endif
-	}
-
-	/**
-	 * For iOS
-	 * Lets you register with Streethawk Server with an array of Friendly Name Definitions which define 
-	 * friendly name string, the mapping view controller, and xib for iPhone or iPad if necessary 
-	 * so that you can launch any activity/Scene of your application on your user’s device from StreetHawk console
-	 * @param SHFriendlyNameObject[] list
-	 */
-	public void shCustomActivityList (params SHFriendlyNameObject[] list)
-	{
-		#if UNITY_IPHONE || UNITY_IOS
-		string[] nameList = new string[list.Length];
-		string[] vcList = new string[list.Length];
-		string[] xib_iphoneList = new string[list.Length];
-		string[] xib_ipadList = new string[list.Length];
-		for (int i = 0; i < list.Length; i++) {
-			nameList [i] = list [i].friendlyName;
-			vcList [i] = list [i].vc;
-			xib_iphoneList [i] = list [i].xib_iphone;
-			xib_ipadList [i] = list [i].xib_ipad;
+		
+		#elif UNITY_IPHONE || UNITY_IOS
+		string[] nameList = new string[_ActivityList.Count];
+		string[] vcList = new string[_ActivityList.Count];
+		string[] xib_iphoneList = new string[_ActivityList.Count];
+		string[] xib_ipadList = new string[_ActivityList.Count];
+		for (int i = 0; i < _ActivityList.Count; i++) {
+			nameList [i] = _ActivityList.Keys.ElementAt (i);
+			vcList [i] = _ActivityList.Values.ElementAt (i);
+			xib_iphoneList [i] = "";
+			xib_ipadList [i] = "";
 		}
-		_shCustomActivityList (nameList, vcList, xib_iphoneList, xib_ipadList, list.Length);
+		_shCustomActivityList (nameList, vcList, xib_iphoneList, xib_ipadList, _ActivityList.Count);
 		#endif
 	}
 	
