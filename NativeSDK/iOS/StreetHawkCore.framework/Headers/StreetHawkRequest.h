@@ -19,10 +19,23 @@
 #import "StreetHawkPublicFwds.h"
 
 /**
+ Current supporting host versions.
+ */
+enum SHHostVersion
+{
+    SHHostVersion_Unknown,
+    SHHostVersion_V1,
+    SHHostVersion_V2,
+};
+typedef enum SHHostVersion SHHostVersion;
+
+/**
  Callback when a request process done. 
  @param request The request object contains process result, for example error or resultValue.
  */
 typedef void (^SHRequestHandler)(SHRequest *request);
+
+#define SMART_PUSH_PAYLOAD  @"SMART_PUSH_PAYLOAD"
 
 /**
  All http requests used to communicate with server uses this class. It's a wrapper of NSURLConnection and easier to use by block callback.
@@ -34,13 +47,14 @@ typedef void (^SHRequestHandler)(SHRequest *request);
 /**
  Helper method to create a request object.
  @param path The internal path after root url, for example: "products/product_id/description/".
+ @param hostVersion The version of current host.
  @param params A key/value pair, which will format to paramters in URL, for example (@"family", @"tops") will become "?family=tops".
  @param method GET or POST. If pass nil it's GET by default.
  @param headers The header fields sent in request. Pass nil if no header need to set.
  @param body_or_stream Set to post body. It's usually array, dictionary or data.
  @return An auto-released request.
  */
-+ (SHRequest *)requestWithPath:(NSString *)path withParams:(NSArray *)params withMethod:(NSString *)method withHeaders:(NSDictionary *)headers withBodyOrStream:(id)body_or_stream;
++ (SHRequest *)requestWithPath:(NSString *)path withVersion:(SHHostVersion)hostVersion withParams:(NSArray *)params withMethod:(NSString *)method withHeaders:(NSDictionary *)headers withBodyOrStream:(id)body_or_stream;
 
 /**
  Helper method to create a simple request object.

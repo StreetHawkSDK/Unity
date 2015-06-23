@@ -29,6 +29,7 @@ FOUNDATION_EXPORT const unsigned char StreetHawkCoreVersionString[];
 //folder Public/
 #import <StreetHawkCore/ISHCustomiseHandler.h>
 #import <StreetHawkCore/ISHPhonegapObserver.h>
+#import <StreetHawkCore/PushDataForApplication.h>
 #import <StreetHawkCore/StreetHawkApp.h>
 #import <StreetHawkCore/StreetHawkLocationManager.h>
 #import <StreetHawkCore/StreetHawkNotificationHandler.h>
@@ -39,7 +40,6 @@ FOUNDATION_EXPORT const unsigned char StreetHawkCoreVersionString[];
 #import <StreetHawkCore/StreetHawkCrashHandler.h>
 #import <StreetHawkCore/StreetHawkInstallHandler.h>
 #import <StreetHawkCore/StreetHawkLogger.h>
-#import <StreetHawkCore/StreetHawkRateHandler.h>
 
 //folder Public/Object/
 #import <StreetHawkCore/StreetHawkFeedObject.h>

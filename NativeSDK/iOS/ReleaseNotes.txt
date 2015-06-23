@@ -1,3 +1,28 @@
+Version Number   : 1/1.6.1
+Release Date     : 9-June-2015
+Notes:
+1. Pointzi end point update, refine API definition.
+2. Add property to set App Key.
+3. Pointzi implement click increase.
+4. Add API to send feedback title and content without UI.
+------------------------------------------------------------------------
+Version Number   : 1/1.6.0
+Release Date     : 29-May-2015
+Notes:
+1. Implement new loglines to /v2, Install 1/1.6.0 SDK do fresh new install.
+2. Install update add feature flags, indicating location, notification and iBeacon.
+3. Add battery and memory level in crash reports. 
+4. Add API for accept `advertising identifier` and send it to install/update.
+5. Put multiple feedback in queue if a lot of feedback happen at same time.
+6. Handle custom confirm dialog in notification.
+7. Handle sequence action after notification make decision.
+8. View enter/exit consider canceled pop up.
+9. Tag function return BOOL to indicate succeed or fail.
+10. Re-implement smart push.
+11. Implement emoji conversion.
+12. iBeacon multiple device in same UUID.
+13. Pointzi integration.
+------------------------------------------------------------------------
 Version Number   : 1/1.5.5
 Release Date     : 25-April-2015
 Notes:

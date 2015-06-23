@@ -19,6 +19,7 @@
 #import "StreetHawkPublicFwds.h"
 #import "StreetHawkUtils.h" //for enum SHDevelopmentPlatform
 #import "StreetHawkFeedObject.h" //for SHNewFeedsHandler and SHFeedsFetchHandler
+#import "PushDataForApplication.h" //for SHResult
 
 /**
  Callback once open url app delegate triggers.
@@ -84,7 +85,10 @@ typedef void (^SHOpenUrlHandler)(NSURL *openUrl);
 
 /**
  Initialize for an Application, setting up the environment.
- @param appKey The global name of the app. This is registered in StreetHawk server, once registered it cannot change.
+ @param appKey The global name of the app. This is registered in StreetHawk server, once registered it cannot change. There are three ways to set `appKey`:
+               1. Set `appKey` by this function.
+               2. If 1 pass nil or empty, check property `StreetHawk.appKey`.
+               3. If 1 and 2 still nill or empty, check InfoPlist `APP_KEY`.
  @param isDebugMode The mode of whether print NSLog in Xcode console.
  @param iTunesId The App id after register in iTunes, for example @"337064413". It used for rating App, if this id is not setup, rating dialog will not promote.
  */
@@ -93,20 +97,14 @@ typedef void (^SHOpenUrlHandler)(NSURL *openUrl);
 /** @name Global properties */
 
 /**
- The allocated name or code for this app as set in the StreetHawk Cloud, for example "SHSheridan1". It's mandatory for an Application to work.
+ The allocated name or code for this app as set in the StreetHawk Cloud, for example "SHSheridan1". It's mandatory for an Application to work. Check `- (void)registerInstallForApp:(NSString *)appKey withDebugMode:(BOOL)isDebugMode withiTunesId:(NSString *)iTunesId` for how it works.
  */
-@property (nonatomic, readonly, weak) NSString *appKey;
+@property (nonatomic, strong) NSString *appKey;
 
 /**
- Set up default host url, it's the starting url. Normally customers does not need to set it, and use "https://api.streethawk.com" as starting url. Some test App can set it be "https://api-dev.streethawk.com". It's only used for initialise, set this before call `registerInstallForApp:withDebugMode:withiTunesId:`.
+ Set up default host url, it's the starting url. Normally customers does not need to set it, and use "https://api.streethawk.com" as starting url. Some test App can set it be "https://dev.streethawk.com". It's only used for initialise, set this before call `registerInstallForApp:withDebugMode:withiTunesId:`.
  */
 - (void)setDefaultStartingUrl:(NSString *)defaultUrl;
-
-/**
- The current alive host url. It can be switched to other host at runtime by app_status. This is readonly function return the local cached alive host root url, if it's empty return default one `hostDefaultRootUrl`. Get function contains version, for example @"https://api.streethawk.com/V1". Use `makeBaseUrlString(StreetHawk.hostAliveRootUrl, @"install/details/")` to create request path.
- * Set: if set nil or empty or same host url, nothing happen; otherwise the alive host root url is changed to new one. Set function should NOT contain version, just be @"https://api.streethawk.com".
- */
-@property (nonatomic, readonly, weak) NSString *hostAliveRootUrl;
 
 /**
  Decide whether need to show debug log in console.
@@ -142,11 +140,6 @@ The application version and build version of current Application, formatted as @
  Make sure installs/register or installs/update happen in sequence.
  */
 @property (nonatomic, strong) dispatch_semaphore_t install_semaphore;
-
-/**
- A flag to indicate whether current is uploading logs. 
- */
-@property (nonatomic) BOOL uploading_log;
 
 /**
  An enum for current App's development platform, refer to `SHDevelopmentPlatform` for supporting platforms. This is only used internally, and setup by Phonegap plugin, Titanium module, Xamarin binding etc. Normal customer does not need to change it.
@@ -193,7 +186,7 @@ The application version and build version of current Application, formatted as @
 
  - (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
  {
-    [StreetHawk shBackgroundTask:completionHandler];
+    [StreetHawk shRegularTask:completionHandler];
  }
  
  - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
@@ -431,7 +424,7 @@ The application version and build version of current Application, formatted as @
 /** @name Global properties and methods */
 
 /**
- API to trigger feedback. It behaves in this way:
+ API to trigger feedback UI and send feedback. It behaves in this way:
  
  * If define option choice list by `arrayChoice`, a choice list will show first, after user select one of the option: a) If `needInput` is Yes, an input UI with the selected choice is displayed for user to input free text; b) If `needInput` is No user's selected choice is posted to server directly.
  * If `arrayChoice` = nil or empty, input free text UI is displayed for user to type.
@@ -441,10 +434,17 @@ The application version and build version of current Application, formatted as @
  @param needConfirm Whether need to show confirm alert dialog of Cancel/Yes Please!. When App in FG and notification arrive needs to show confirm dialog.
  @param infoTitle The title display on choice list. If nil shows "<App Name> loves Feedback!".
  @param infoMessage The message display on choice list. It can be nil or empty.
- @param pushMsgid When used in remote notification, pass in "i" field from server. If not used in remote notification, pass 0.
- @param pushData When used in remote notification, pass in "d" field from server. If not used in remote notification, pass nil.
+ @param pushData When used in notification, pass in payload from server. If not used in notification, pass nil.
  */
--(void)shFeedback:(NSArray *)arrayChoice needInputDialog:(BOOL)needInput needConfirmDialog:(BOOL)needConfirm withTitle:(NSString *)infoTitle withMessage:(NSString *)infoMessage withPushMsgid:(NSInteger)pushMsgid withPushData:(NSString *)pushData;
+- (void)shFeedback:(NSArray *)arrayChoice needInputDialog:(BOOL)needInput needConfirmDialog:(BOOL)needConfirm withTitle:(NSString *)infoTitle withMessage:(NSString *)infoMessage withPushData:(PushDataForApplication *)pushData;
+
+/**
+ Submit feedback request to server without UI.
+ @param title Feedback title submit to server. 
+ @param content Feedback content submit to server. 
+ @param handler Request callback handler.
+ */
+- (void)shSendFeedbackWithTitle:(NSString *)title withContent:(NSString *)content withHandler:(SHCallbackHandler)handler;
 
 /**
  Push notification 8004/8006/8007 is to launch a certain view controller, however it's difficult for server to know "how to launch the view controller". In iOS platform it requires the following elements to initialize a view controller:
@@ -497,6 +497,13 @@ The application version and build version of current Application, formatted as @
 - (void)shSetCustomiseHandler:(id<ISHCustomiseHandler>)handler;
 
 /**
+ Go through register `ISHCustomiseHandler` until find one which can handle this notitication.
+ @param pushData Payload from this notification.
+ @param handler Callback with result.
+ */
+- (void)handlePushDataForAppCallback:(PushDataForApplication *)pushData clickButton:(ClickButtonHandler)handler;
+
+/**
  Register observer for phonegap App to load html page when receive 8004 push notification.
  @param phonegapObserver Instance class of `ISHPhonegapObserver` to load html on customer's phonegap web view.
  */
@@ -519,25 +526,29 @@ The application version and build version of current Application, formatted as @
  */
 @property (nonatomic, copy) SHOpenUrlHandler openUrlHandler;
 
+/**
+ StreetHawk can use `AdvertisingIdentifier` to help trace end-user, however it requires customer's App is capable to use advertising function according to Apple's agreement. If customer's App can get this, pass into StreetHawk.
+ */
+@property (nonatomic, strong) NSString *advertisingIdentifier;
+
 /** @name Background Regular Task */
 
 /**
- Perform background task at certain time interval. It leverages `UIApplicationDelegate` function `- (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler` to do some tasks at background. Note:
+ Perform regular task at certain time interval. It leverages `UIApplicationDelegate` function `- (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler` to do some tasks at background, and when App in foreground, it calls each time when App become active. Note:
  
  1. Customer App must have Background mode -> fetch enabled to have this work. 
  2. This function is available since iOS 7.0. Previous iOS system cannot support it. 
  3. User App implement this function by calling it in AppDelegate.m if NOT auto-integrate. If `StreetHawk.autoIntegrateAppDelegate = YES;` make sure NOT call this otherwise cause dead loop. Code snippet:
     `- (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler`
     `{`
-        `[StreetHawk shBackgroundTask:completionHandler needComplete:YES];`
+        `[StreetHawk shRegularTask:completionHandler needComplete:YES];`
     `}`
  
  This function perform following tasks:
- 1. It's called every hour.
- 2. If user's location service is enabled, every time it's launched, send non-priority log for current user location (domain=location, code=19).
- 3. Check whether install/log is sent within 6 hours. If inside 6 hours no install/log sent, sends priority heartbeat log (domain=system, code=8051).
+ 1. If user's location service is enabled, time interval one hour, send non-priority log for current user location (code=19).
+ 2. Sends priority heartbeat log in 6 hours(code=8051).
  */
-- (void)shBackgroundTask:(void (^)(UIBackgroundFetchResult result))completionHandler needComplete:(BOOL)needComplete NS_AVAILABLE_IOS(7_0);
+- (void)shRegularTask:(void (^)(UIBackgroundFetchResult result))completionHandler needComplete:(BOOL)needComplete NS_AVAILABLE_IOS(7_0);
 
 /** @name Open Url Scheme */
 
@@ -568,9 +579,28 @@ The application version and build version of current Application, formatted as @
 - (void)feed:(NSInteger)offset withHandler:(SHFeedsFetchHandler)handler;
 
 /**
- Send no priority logline for feed once it's seen by user. Code=8201, domain is empty, comment=passin_feed_id, feed_id=passin_feed_id, result=passin_int.
+ Send no priority logline for feedack. Customer developer should call this when a feed is read. Server may receive multiple loglines if user read one feed many times.
+ @param feed_id The feed id of reading feed.
  */
-- (void)sendLogForFeed:(NSInteger)feed_id withResult:(NSInteger)result;
+- (void)sendFeedAck:(NSInteger)feed_id;
+
+/**
+ Send no priority logline for feed result.
+ @param feed_id The feed id of result feed.
+ @param result The result for accept, or postpone or decline.
+ */
+- (void)sendLogForFeed:(NSInteger)feed_id withResult:(SHResult)result;
+
+/** @name Pointzi */
+
+/**
+ Call this function to share and invite friend.
+ 
+ @param utm_campaign Optional, for identify how this share is used for. For example in a book App, it would be "Child", "Computer", "Poetry".
+ @param shareUrl Optional, share url which will open App by browser link. For example, to open App page with parameter, url like "hawk://launchVC?vC=Deep%20Linking&param1=this%20is%20a%20test&param2=123".
+ @param handler Share result callback handler, when successfully share `result` is share_guid_url, otherwise it contains error.
+ */
+- (void)originateShareWithCampaign:(NSString *)utm_campaign shareUrl:(NSURL *)shareUrl streetHawkGrowth_object:(SHCallbackHandler)handler;
 
 /** @name Permission */
 
@@ -606,51 +636,56 @@ The application version and build version of current Application, formatted as @
 @interface SHApp (LoggerExt)
 
 /**
- Send log with domain="custom", code=8999. It's used for tagging a string value for user. For example, you can tag user's email as by:
+ Send log with code=8999. It's used for tagging a string value for user. For example, you can tag user's email as by:
  
  `[StreetHawk tagString:@"a@a.com" forKey:@"sh_email"];`
  
- This will send log comment as {"key": "sh_email", "value": @"a@a.com", "type": "string"}.
+ This will send log comment as {"key": "sh_email", "string": @"a@a.com"}.
  
  @param value The value for tag to the user profile. Cannot be empty. It can be NSString, or NSDictionary, or NSArray. 
  @param key The key for tag to the user profile. Cannot be empty.
+ @return If tag to server return YES; if fail to send to server return NO.
  */
--(void)tagString:(NSObject *)value forKey:(NSString *)key;
+- (BOOL)tagString:(NSObject *)value forKey:(NSString *)key;
 
 /**
- Send log with domain="custom", code=8999. It's used for tagging a number value for user. For example, you can tag user's favourite product count by:
+ Send log with code=8999. It's used for tagging a number value for user. For example, you can tag user's favourite product count by:
  
  `[StreetHawk tagNumeric:8 forKey:@"fave_product"];`
  
- This will send log comment as {"key": "fave_product", "value": [NSNumber numberWithDouble:8], "type": "numeric"}.
+ This will send log comment as {"key": "fave_product", "numeric": [NSNumber numberWithDouble:8]}.
  
  @param value The number value for tag to the user profile.
  @param key The key for tag to the user profile. Cannot be empty.
+ @return If tag to server return YES; if fail to send to server return NO.
  */
--(void)tagNumeric:(double)value forKey:(NSString *)key;
+- (BOOL)tagNumeric:(double)value forKey:(NSString *)key;
 
 /**
- Send log with domain="custom", code=8999. It's used for tagging a date value for user. For example, you can tag user's visit time by:
+ Send log with code=8999. It's used for tagging a date value for user. For example, you can tag user's visit time by:
  
  `[StreetHawk tagDatetime:[NSDate date] forKey:@"visit_time"];`
  
- This will send log comment as {"key": "visit_time", "value": [NSDate date], "type": "datetime"}.
+ This will send log comment as {"key": "visit_time", "datetime": [NSDate date]}.
  
  @param value The date value for tag to the user profile. Cannot be empty.
  @param key The key for tag to the user profile. Cannot be empty.
+ @return If tag to server return YES; if fail to send to server return NO.
  */
--(void)tagDatetime:(NSDate *)value forKey:(NSString *)key;
+- (BOOL)tagDatetime:(NSDate *)value forKey:(NSString *)key;
 
 /**
- This is opposite function of `tagString` or `tagNumeric` or `tagDatetime`. It's to remove a user tag by the key, for example `tagDatetime` adds {"key": "sh_date_of_birth", "value": "2012-12-12 11:11:11", "type": "datetime"}, so this `removeUserTag` can remove the tag by key = "sh_date_of_birth". It send log with domain="custom", code=8998, comment = "{key : "sh_date_of_birth"}".
+ This is opposite function of `tagString` or `tagNumeric` or `tagDatetime`. It's to remove a user tag by the key, for example `tagDatetime` adds {"key": "sh_date_of_birth", "datetime": "2012-12-12 11:11:11"}, so this `removeUserTag` can remove the tag by key = "sh_date_of_birth". It send log with code=8998, comment = "{key : "sh_date_of_birth"}".
  @param key Key for existing tag. Cannot be empty.
+ @return If tag to server return YES; if fail to send to server return NO.
  */
--(void)removeTag:(NSString *)key;
+- (BOOL)removeTag:(NSString *)key;
 
 /**
- Send log with domain="custom", code=8999, comment={"key": "<key>", "value": 1, "operator": "+", "type": "numeric"}.
+ Send log with code=8997, comment={"key": "<key>", "numeric": 1}.
  @param key Key for existing tag. Cannot be empty.
+ @return If tag to server return YES; if fail to send to server return NO.
  */
--(void)incrementTag:(NSString *)key;
+- (BOOL)incrementTag:(NSString *)key;
 
 @end
